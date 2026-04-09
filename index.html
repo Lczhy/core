@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover, shrink-to-fit=no" />
   <title>CORE · 定制网站 | 随心所建</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -10,6 +10,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- Lenis 平滑滚动库 (移动端将禁用) -->
   <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
@@ -20,6 +21,7 @@
       cursor: none;
       overscroll-behavior: none;
       -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
     }
     h1, h2, h3, .serif { font-family: 'Playfair Display', serif; font-weight: 500; letter-spacing: -0.02em; }
     .custom-cursor {
@@ -40,12 +42,15 @@
       display: inline-block; padding: 0.8rem 2.4rem; border-radius: 9999px; 
       border: 1px solid rgba(140,120,90,0.2); background: rgba(255,255,255,0.3); 
       backdrop-filter: blur(8px); transition: all 0.4s;
+      -webkit-tap-highlight-color: transparent;
     }
     .btn-capsule:hover { background: #1c1c1c; color: #fafaf9; border-color: #1c1c1c; }
     .price-card {
       border: 1px solid rgba(180,160,130,0.15); background: rgba(255,255,255,0.6);
       backdrop-filter: blur(12px); transition: all 0.3s;
+      -webkit-tap-highlight-color: transparent;
     }
+    .price-card:active { transform: scale(0.98); }
     .price-card:hover { border-color: rgba(200,180,140,0.5); transform: translateY(-4px); }
     .demo-card { background: rgba(255,255,255,0.75); backdrop-filter: blur(20px); border: 1px solid rgba(200,180,140,0.2); }
     .gold-text { color: #8a7356; }
@@ -62,22 +67,48 @@
     .preview-note { font-size: 0.7rem; opacity: 0.5; font-style: italic; }
     
     /* 侧边导航 */
-    .nav-dots { position: fixed; right: 24px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 16px; }
-    .nav-dot { width: 8px; height: 8px; border-radius: 20px; background: rgba(140,120,90,0.3); backdrop-filter: blur(4px); border: 1px solid rgba(180,150,110,0.3); transition: all 0.25s; cursor: pointer; position: relative; }
+    .nav-dots { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 14px; }
+    .nav-dot { width: 8px; height: 8px; border-radius: 20px; background: rgba(140,120,90,0.35); backdrop-filter: blur(4px); border: 1px solid rgba(180,150,110,0.4); transition: all 0.25s; cursor: pointer; position: relative; }
     .nav-dot:hover { transform: scale(2.2); background: #b8a27c; }
     .nav-dot.active { width: 10px; height: 10px; background: #8a7356; transform: scale(1.8); }
-    .nav-label { position: absolute; right: 24px; top: 0; background: rgba(250,250,249,0.8); backdrop-filter: blur(8px); padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; white-space: nowrap; opacity: 0; transition: opacity 0.2s; pointer-events: none; border: 1px solid rgba(180,150,110,0.2); }
+    .nav-label { position: absolute; right: 24px; top: -2px; background: rgba(250,250,249,0.9); backdrop-filter: blur(8px); padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; white-space: nowrap; opacity: 0; transition: opacity 0.2s; pointer-events: none; border: 1px solid rgba(180,150,110,0.2); }
     .nav-dot:hover .nav-label { opacity: 1; }
-    @media (max-width: 768px) { .nav-dots { display: none; } }
+    
+    /* 移动端导航点样式 */
+    @media (max-width: 768px) {
+      .nav-dots { display: flex !important; right: 8px; gap: 10px; background: rgba(250,250,249,0.3); backdrop-filter: blur(8px); padding: 8px 5px; border-radius: 40px; border: 1px solid rgba(200,180,140,0.2); }
+      .nav-dot { width: 6px; height: 6px; }
+      .nav-dot.active { width: 8px; height: 8px; }
+      .nav-label { display: none; }
+    }
+    
+    /* 修复设计语言板块在移动端重叠 */
+    @media (max-width: 768px) {
+      .md\:col-span-7, .md\:col-span-5, .md\:col-span-6 { margin-left: 0 !important; margin-top: 0 !important; }
+      .-ml-6, .-ml-12 { margin-left: 0 !important; }
+      .-mt-8, .-mt-14 { margin-top: 0 !important; }
+      .md\:row-span-2 { grid-row: auto !important; }
+      .md\:row-start-3 { grid-row-start: auto !important; }
+      .md\:col-start-7, .md\:col-start-8 { grid-column-start: auto !important; }
+    }
+    
     @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
     .shake-effect { animation: shake 0.3s ease-in-out; }
     
     .tiny-note { font-size: 0.55rem; opacity: 0.6; letter-spacing: 0.2px; }
     
-    /* 购物车区域 */
     .cart-section {
       background: rgba(255,255,255,0.6); backdrop-filter: blur(16px);
       border: 1px solid rgba(200,180,140,0.25); border-radius: 2rem;
+    }
+    
+    button, .price-card, .nav-dot, a { -webkit-touch-callout: none; }
+    input, textarea { font-size: 16px; } /* 防止iOS缩放 */
+    #threeBg { pointer-events: none !important; }
+    
+    /* 修复安卓部分浏览器 backdrop-filter 支持问题：回退背景 */
+    @supports not (backdrop-filter: blur(10px)) {
+      .glass-nav, .price-card, .demo-card, .cart-section { background: rgba(255,255,255,0.9); }
     }
   </style>
 </head>
@@ -96,7 +127,7 @@
   </div>
 
   <main class="relative z-10">
-    <nav class="glass-nav fixed top-0 left-0 w-full z-50 px-6 md:px-12 py-5 flex justify-between items-center">
+    <nav class="glass-nav fixed top-0 left-0 w-full z-50 px-5 md:px-12 py-4 md:py-5 flex justify-between items-center">
       <div class="text-xl md:text-2xl serif font-semibold tracking-tight">CORE<span class="text-[#b8a27c] text-lg ml-1">.</span></div>
       <div class="hidden md:flex gap-10 text-sm uppercase tracking-wider text-[#3a3a3a]">
         <a href="#why" class="hover:text-[#8a7356]">为何需要</a>
@@ -105,63 +136,63 @@
         <a href="#cart" class="hover:text-[#8a7356]">购物车</a>
         <a href="#contact" class="hover:text-[#8a7356]">联系</a>
       </div>
+      <div class="md:hidden text-xs gold-text">菜单</div>
     </nav>
 
     <section id="hero" class="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-20">
-      <h1 class="serif text-5xl md:text-7xl lg:text-8xl font-medium leading-[1.15] animate-on-scroll">随心所建<br>即你所想</h1>
-      <p class="mt-8 text-lg md:text-xl text-[#4a4a4a] max-w-2xl font-light animate-on-scroll">自由定义 · 灵动组合 · 从框架到细节皆可掌握</p>
-      <div class="mt-12 animate-on-scroll"><a href="#pricing" class="btn-capsule text-lg px-12 py-4">探索定制方案</a></div>
-      <div class="absolute bottom-10 text-sm text-[#6a6a6a] tracking-widest border-b border-[#b8a27c]/30 pb-2">向下滚动</div>
+      <h1 class="serif text-4xl md:text-7xl lg:text-8xl font-medium leading-[1.15] animate-on-scroll">随心所建<br>即你所想</h1>
+      <p class="mt-6 md:mt-8 text-base md:text-xl text-[#4a4a4a] max-w-2xl font-light animate-on-scroll">自由定义 · 灵动组合 · 从框架到细节皆可掌握</p>
+      <div class="mt-10 md:mt-12 animate-on-scroll"><a href="#pricing" class="btn-capsule text-base md:text-lg px-8 md:px-12 py-3 md:py-4">探索定制方案</a></div>
+      <div class="absolute bottom-8 md:bottom-10 text-sm text-[#6a6a6a] tracking-widest border-b border-[#b8a27c]/30 pb-2">向下滚动</div>
     </section>
 
     <!-- 为何需要板块 -->
-    <section id="why" class="py-24 px-6 md:px-12 bg-white">
+    <section id="why" class="py-20 md:py-24 px-5 md:px-12 bg-white">
       <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-16">
-          <h2 class="serif text-4xl md:text-5xl mb-4 text-[#1c1c1c]">让世界看见你的故事</h2>
-          <p class="text-[#555] max-w-2xl mx-auto text-base">不止是网站，更是你与世界对话的窗口。</p>
+        <div class="text-center mb-12 md:mb-16">
+          <h2 class="serif text-3xl md:text-5xl mb-3 md:mb-4 text-[#1c1c1c]">让世界看见你的故事</h2>
+          <p class="text-[#555] max-w-2xl mx-auto text-sm md:text-base">不止是网站，更是你与世界对话的窗口。</p>
         </div>
-        <div class="grid md:grid-cols-3 gap-8 text-sm">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-sm">
           <div class="animate-on-scroll p-6 rounded-2xl bg-[#f8f7f5] border border-[#e8e4de]"><div class="text-3xl mb-4 gold-text">01</div><h3 class="serif text-xl mb-3">24小时在线展厅</h3><p class="text-[#555] leading-relaxed">无论你是摄影师、设计师还是写作者，专属网站让作品摆脱算法束缚，随时以最优雅的姿态呈现。</p></div>
           <div class="animate-on-scroll p-6 rounded-2xl bg-[#f8f7f5] border border-[#e8e4de]" style="transition-delay:0.1s"><div class="text-3xl mb-4 gold-text">02</div><h3 class="serif text-xl mb-3">建立专业信任</h3><p class="text-[#555] leading-relaxed">独立域名与精雕细琢的排版传递可靠与品位，更容易赢得合作机会与媒体关注。</p></div>
           <div class="animate-on-scroll p-6 rounded-2xl bg-[#f8f7f5] border border-[#e8e4de]" style="transition-delay:0.2s"><div class="text-3xl mb-4 gold-text">03</div><h3 class="serif text-xl mb-3">完全掌控内容</h3><p class="text-[#555] leading-relaxed">摆脱平台规则束缚，自由定义风格、扩展功能，真正拥有自己的数字家园。</p></div>
         </div>
-        <div class="mt-12 grid md:grid-cols-3 gap-6">
-          <div class="bg-[#f8f7f5] p-8 rounded-3xl border border-[#e8e4de] animate-on-scroll"><span class="text-2xl mb-3 block">🎁</span><h3 class="serif text-2xl mb-3">一份独一无二的礼物</h3><p class="text-[#555] leading-relaxed">为她或他定制一个专属网页，存放你们的照片、文字与共同回忆。比起转瞬即逝的鲜花，一个永久在线的纪念空间更能诉说心意。</p></div>
-          <div class="bg-[#f8f7f5] p-8 rounded-3xl border border-[#e8e4de] animate-on-scroll" style="transition-delay:0.1s"><span class="text-2xl mb-3 block">💞</span><h3 class="serif text-2xl mb-3">两个人的秘密花园</h3><p class="text-[#555] leading-relaxed">打造只属于你们的线上角落，记录从初见到如今的点点滴滴。无需分享给他人，这是你们共同维护的浪漫编年史。</p></div>
-          <div class="bg-[#f8f7f5] p-8 rounded-3xl border border-[#e8e4de] animate-on-scroll" style="transition-delay:0.2s"><span class="text-2xl mb-3 block">📖</span><h3 class="serif text-2xl mb-3">自己的私密日记</h3><p class="text-[#555] leading-relaxed">一个仅自己可见的树洞，记录每日思绪、灵感碎片或成长轨迹。加密保护，安静相伴，这里是数字世界里只属于你的精神角落。</p></div>
+        <div class="mt-10 md:mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-[#f8f7f5] p-6 md:p-8 rounded-3xl border border-[#e8e4de] animate-on-scroll"><span class="text-2xl mb-3 block">🎁</span><h3 class="serif text-xl md:text-2xl mb-3">一份独一无二的礼物</h3><p class="text-[#555] leading-relaxed text-sm">为她或他定制一个专属网页，存放你们的照片、文字与共同回忆。比起转瞬即逝的鲜花，一个永久在线的纪念空间更能诉说心意。</p></div>
+          <div class="bg-[#f8f7f5] p-6 md:p-8 rounded-3xl border border-[#e8e4de] animate-on-scroll" style="transition-delay:0.1s"><span class="text-2xl mb-3 block">💞</span><h3 class="serif text-xl md:text-2xl mb-3">两个人的秘密花园</h3><p class="text-[#555] leading-relaxed text-sm">打造只属于你们的线上角落，记录从初见到如今的点点滴滴。无需分享给他人，这是你们共同维护的浪漫编年史。</p></div>
+          <div class="bg-[#f8f7f5] p-6 md:p-8 rounded-3xl border border-[#e8e4de] animate-on-scroll" style="transition-delay:0.2s"><span class="text-2xl mb-3 block">📖</span><h3 class="serif text-xl md:text-2xl mb-3">自己的私密日记</h3><p class="text-[#555] leading-relaxed text-sm">一个仅自己可见的树洞，记录每日思绪、灵感碎片或成长轨迹。加密保护，安静相伴，这里是数字世界里只属于你的精神角落。</p></div>
         </div>
       </div>
     </section>
 
     <!-- 设计语言板块 -->
-    <section id="services" class="py-28 px-6 md:px-12 bg-[#f8f7f5]">
+    <section id="services" class="py-20 md:py-28 px-5 md:px-12 bg-[#f8f7f5]">
       <div class="max-w-7xl mx-auto">
-        <div class="mb-24 flex flex-col md:flex-row md:items-end justify-between">
-          <h2 class="serif text-4xl md:text-6xl animate-on-scroll">重叠与留白<br><span class="text-2xl font-light text-[#666] mt-3 block">—— 空间的诗意</span></h2>
-          <p class="text-[#555] max-w-md animate-on-scroll">通过图层交错、负空间与节奏控制，构建富有呼吸感的视觉叙事。</p>
+        <div class="mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between">
+          <h2 class="serif text-3xl md:text-6xl animate-on-scroll">重叠与留白<br><span class="text-xl md:text-2xl font-light text-[#666] mt-2 md:mt-3 block">—— 空间的诗意</span></h2>
+          <p class="text-[#555] max-w-md text-sm md:text-base animate-on-scroll">通过图层交错、负空间与节奏控制，构建富有呼吸感的视觉叙事。</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[170px] md:auto-rows-[230px]">
-          <div class="md:col-span-7 row-span-2 relative z-10 animate-on-scroll rounded-3xl bg-gradient-to-br from-[#f0eeea] to-[#e2ddd6] shadow-md flex items-center justify-center"><span class="serif text-7xl text-black/5 font-bold">构</span><div class="absolute bottom-6 left-6"><span class="text-sm uppercase tracking-widest text-[#8a7356]">Foundation</span><p class="serif text-3xl mt-1">STRUCTURE</p></div></div>
-          <div class="md:col-span-5 row-span-1 md:col-start-8 relative z-20 -ml-6 md:-ml-12 mt-8 md:mt-12 animate-on-scroll rounded-2xl bg-gradient-to-br from-[#e8e4de] to-[#d6d0c8] shadow-lg flex items-center justify-center"><span class="serif text-5xl text-black/8">留</span><div class="absolute bottom-4 left-4"><p class="text-xs gold-text uppercase">Whitespace</p><p class="serif text-xl">负形之美</p></div></div>
-          <div class="md:col-span-6 row-span-1 md:col-start-1 md:row-start-3 animate-on-scroll rounded-2xl bg-gradient-to-br from-[#ece9e5] to-[#ddd8d2] flex items-center justify-center"><span class="serif text-4xl text-black/8">韵律</span><div class="absolute bottom-4 left-4"><p class="text-xs gold-text">Rhythm</p><p class="serif text-lg">重复与变化</p></div></div>
-          <div class="md:col-span-6 row-span-2 md:col-start-7 md:row-start-3 -mt-8 md:-mt-14 animate-on-scroll rounded-3xl bg-gradient-to-br from-[#e4dfd9] to-[#d2ccc4] shadow-md flex items-center justify-center"><span class="serif text-6xl text-black/8">层叠</span><div class="absolute bottom-6 left-6"><p class="text-xs gold-text">Layers</p><p class="serif text-2xl">深度与交错</p></div></div>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 auto-rows-[auto] md:auto-rows-[230px]">
+          <div class="md:col-span-7 row-span-1 md:row-span-2 relative z-10 animate-on-scroll rounded-3xl bg-gradient-to-br from-[#f0eeea] to-[#e2ddd6] shadow-md flex items-center justify-center p-6 h-48 md:h-auto"><span class="serif text-5xl md:text-7xl text-black/5 font-bold">构</span><div class="absolute bottom-4 left-4 md:bottom-6 md:left-6"><span class="text-xs md:text-sm uppercase tracking-widest text-[#8a7356]">Foundation</span><p class="serif text-2xl md:text-3xl mt-1">STRUCTURE</p></div></div>
+          <div class="md:col-span-5 row-span-1 md:col-start-8 relative z-20 md:-ml-12 md:mt-12 animate-on-scroll rounded-2xl bg-gradient-to-br from-[#e8e4de] to-[#d6d0c8] shadow-lg flex items-center justify-center p-4 h-40 md:h-auto"><span class="serif text-4xl md:text-5xl text-black/8">留</span><div class="absolute bottom-4 left-4"><p class="text-xs gold-text uppercase">Whitespace</p><p class="serif text-lg md:text-xl">负形之美</p></div></div>
+          <div class="md:col-span-6 row-span-1 md:col-start-1 md:row-start-3 animate-on-scroll rounded-2xl bg-gradient-to-br from-[#ece9e5] to-[#ddd8d2] flex items-center justify-center p-4 h-36 md:h-auto"><span class="serif text-3xl md:text-4xl text-black/8">韵律</span><div class="absolute bottom-4 left-4"><p class="text-xs gold-text">Rhythm</p><p class="serif text-base md:text-lg">重复与变化</p></div></div>
+          <div class="md:col-span-6 row-span-1 md:row-span-2 md:col-start-7 md:row-start-3 md:-mt-14 animate-on-scroll rounded-3xl bg-gradient-to-br from-[#e4dfd9] to-[#d2ccc4] shadow-md flex items-center justify-center p-6 h-48 md:h-auto"><span class="serif text-5xl md:text-6xl text-black/8">层叠</span><div class="absolute bottom-4 left-4 md:bottom-6 md:left-6"><p class="text-xs gold-text">Layers</p><p class="serif text-xl md:text-2xl">深度与交错</p></div></div>
         </div>
-        <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
-          <div class="animate-on-scroll"><p class="serif text-xl mb-2">01 留白呼吸</p><p class="text-[#555]">适当的空白区域让内容更聚焦，提升阅读舒适度与高级感。</p></div>
-          <div class="animate-on-scroll" style="transition-delay:0.1s"><p class="serif text-xl mb-2">02 图层交错</p><p class="text-[#555]">通过z轴层叠与透明感，创造丰富的视觉层次。</p></div>
-          <div class="animate-on-scroll" style="transition-delay:0.2s"><p class="serif text-xl mb-2">03 节奏把控</p><p class="text-[#555]">图片与文字交替出现的韵律，引导用户视线。</p></div>
+        <div class="mt-12 md:mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-sm">
+          <div class="animate-on-scroll"><p class="serif text-lg md:text-xl mb-2">01 留白呼吸</p><p class="text-[#555]">适当的空白区域让内容更聚焦，提升阅读舒适度与高级感。</p></div>
+          <div class="animate-on-scroll" style="transition-delay:0.1s"><p class="serif text-lg md:text-xl mb-2">02 图层交错</p><p class="text-[#555]">通过z轴层叠与透明感，创造丰富的视觉层次。</p></div>
+          <div class="animate-on-scroll" style="transition-delay:0.2s"><p class="serif text-lg md:text-xl mb-2">03 节奏把控</p><p class="text-[#555]">图片与文字交替出现的韵律，引导用户视线。</p></div>
         </div>
       </div>
     </section>
 
     <!-- 定价区域 -->
-    <section id="pricing" class="py-28 px-6 md:px-12">
+    <section id="pricing" class="py-20 md:py-28 px-5 md:px-12">
       <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-16"><h2 class="serif text-4xl md:text-6xl mb-5 animate-on-scroll">透明方案 · 随心组合</h2><p class="text-[#555] animate-on-scroll">点击卡片预览效果，灵活搭配附加项。</p></div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+        <div class="text-center mb-12 md:mb-16"><h2 class="serif text-3xl md:text-6xl mb-4 md:mb-5 animate-on-scroll">透明方案 · 随心组合</h2><p class="text-[#555] text-sm md:text-base animate-on-scroll">点击卡片预览效果，灵活搭配附加项。</p></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-5">
           
-          <!-- 1. 轻量文案 -->
           <div class="price-card p-5 rounded-3xl flex flex-col" data-demo="essential">
             <span class="text-xs uppercase gold-text mb-1">基础</span>
             <h3 class="serif text-2xl mb-1">轻量文案</h3>
@@ -179,7 +210,6 @@
             <div class="mt-2 text-right text-[0.65rem] gold-text">点击预览 →</div>
           </div>
 
-          <!-- 2. 优美排版 -->
           <div class="price-card p-5 rounded-3xl flex flex-col" data-demo="design">
             <span class="text-xs uppercase gold-text mb-1">排版款</span>
             <h3 class="serif text-2xl mb-1">优美排版</h3>
@@ -197,7 +227,6 @@
             <div class="mt-2 text-right text-[0.65rem] gold-text">点击预览 →</div>
           </div>
 
-          <!-- 3. 双端适配 -->
           <div class="price-card p-5 rounded-3xl flex flex-col relative" data-demo="responsive">
             <span class="recommend-tag absolute -top-2 right-3">📱 响应式</span>
             <span class="text-xs uppercase gold-text mb-1">全响应</span>
@@ -213,7 +242,6 @@
             <div class="mt-2 text-right text-[0.65rem] gold-text">点击预览 →</div>
           </div>
 
-          <!-- 4. 影像空间 -->
           <div class="price-card p-5 rounded-3xl flex flex-col relative" data-demo="unlimited">
             <span class="recommend-tag absolute -top-2 right-3">🖼️ 20张图片</span>
             <span class="text-xs uppercase gold-text mb-1">创作款</span>
@@ -229,7 +257,6 @@
             <div class="mt-2 text-right text-[0.65rem] gold-text">点击预览 →</div>
           </div>
 
-          <!-- 5. 深度定制 -->
           <div class="price-card p-5 rounded-3xl flex flex-col relative" data-demo="deep">
             <span class="recommend-tag absolute -top-2 right-3">👑 旗舰</span>
             <span class="text-xs uppercase gold-text mb-1">深度定制</span>
@@ -247,125 +274,160 @@
       </div>
     </section>
 
-    <!-- 预览区 + 创建订单按钮 -->
-    <section id="demo" class="py-24 px-6 md:px-12 bg-[#f4f3f1]">
+    <!-- 预览区 -->
+    <section id="demo" class="py-20 md:py-24 px-5 md:px-12 bg-[#f4f3f1]">
       <div class="max-w-6xl mx-auto">
-        <div class="text-center mb-10"><span class="text-sm gold-text uppercase">实时预览</span><h2 class="serif text-4xl mt-3" id="demoTitle">轻量文案 · 效果展示</h2><p class="text-[#666] mt-2" id="demoDesc"></p></div>
-        <div id="demoContent" class="demo-card p-8 md:p-12 rounded-3xl transition-all"></div>
-        <div class="mt-8 flex justify-center gap-4">
-          <button id="backToPricing" class="btn-capsule px-8 py-3 text-sm">返回套餐选择</button>
+        <div class="text-center mb-8 md:mb-10"><span class="text-sm gold-text uppercase">实时预览</span><h2 class="serif text-3xl md:text-4xl mt-3" id="demoTitle">轻量文案 · 效果展示</h2><p class="text-[#666] mt-2 text-sm md:text-base" id="demoDesc"></p></div>
+        <div id="demoContent" class="demo-card p-6 md:p-12 rounded-3xl transition-all"></div>
+        <div class="mt-8 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+          <button id="backToPricing" class="btn-capsule px-6 py-3 text-sm">返回套餐选择</button>
           <button id="orderNowBtn" class="btn-capsule px-8 py-3 text-sm bg-[#1c1c1c] text-white border-[#1c1c1c] hover:bg-[#3a3a3a]">创建订单 →</button>
         </div>
       </div>
     </section>
 
     <!-- 购物车/结算区域 -->
-    <section id="cart" class="py-20 px-6 md:px-12">
+    <section id="cart" class="py-20 px-5 md:px-12">
       <div class="max-w-4xl mx-auto">
-        <div class="text-center mb-10">
+        <div class="text-center mb-8 md:mb-10">
           <span class="text-sm uppercase tracking-widest gold-text">确认订单</span>
-          <h2 class="serif text-4xl mt-3">定制购物车</h2>
+          <h2 class="serif text-3xl md:text-4xl mt-3">定制购物车</h2>
           <p class="text-[#666] mt-2" id="cartPlanName">轻量文案</p>
         </div>
-        <div class="cart-section p-6 md:p-8 rounded-3xl">
-          <div class="space-y-6">
-            <!-- 基础方案 -->
-            <div class="flex justify-between items-center border-b border-[#ddd] pb-4">
+        <div class="cart-section p-5 md:p-8 rounded-3xl">
+          <div class="space-y-5 md:space-y-6">
+            <div class="flex justify-between items-center border-b border-[#ddd] pb-3 md:pb-4">
               <span class="font-medium">基础方案</span>
               <span id="cartBasePrice" class="gold-text text-xl">¥17.7</span>
             </div>
-            
-            <!-- 附加选项区 -->
-            <div id="cartAddons" class="space-y-4">
-              <!-- 由JS动态填充 -->
-            </div>
-            
-            <!-- 备注 -->
+            <div id="cartAddons" class="space-y-4"></div>
             <div class="pt-2">
               <label class="block text-sm mb-2 text-[#555]">📋 网站要求与功能备注</label>
               <textarea id="orderRemarks" rows="3" class="w-full p-3 rounded-xl bg-white/50 border border-[#ddd] focus:border-[#b8a27c] outline-none text-sm" placeholder="请描述您对网站的具体要求、期望色调、参考案例等……"></textarea>
             </div>
-            
-            <!-- 总价与提交 -->
             <div class="flex justify-between items-center pt-4 border-t border-[#ddd]">
-              <span class="text-lg font-medium">总计</span>
+              <span class="text-base md:text-lg font-medium">总计</span>
               <span id="cartTotal" class="text-2xl gold-text font-light">¥17.7</span>
             </div>
-            <button id="submitOrder" class="w-full btn-capsule bg-[#1c1c1c] text-white border-[#1c1c1c] hover:bg-[#3a3a3a] py-4">请保存订单并联系我们</button>
+            <button id="submitOrder" class="w-full btn-capsule bg-[#1c1c1c] text-white border-[#1c1c1c] hover:bg-[#3a3a3a] py-3 md:py-4">请保存订单并联系我们</button>
           </div>
         </div>
       </div>
     </section>
 
-    <footer id="contact" class="py-20 px-6 border-t border-[#e5e0da]">
+    <footer id="contact" class="py-16 md:py-20 px-6 border-t border-[#e5e0da]">
       <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-end">
-        <div><h3 class="serif text-3xl md:text-5xl mb-4">开始创作<span class="text-[#b8a27c]">.</span></h3><p>i228702890@outlook.com · 24h内回复</p></div>
-        <div class="mt-8 md:mt-0 text-right"><p class="text-sm gold-text">社交</p><div class="space-x-6"><a href="#" class="hover:text-[#8a7356]">Instagram</a><a href="#" class="hover:text-[#8a7356]">Twitter</a></div><p class="mt-12 text-xs text-[#888]">© 2025 CORE. 随心所建</p></div>
+        <div><h3 class="serif text-3xl md:text-5xl mb-4">开始创作<span class="text-[#b8a27c]">.</span></h3><p class="text-sm md:text-base">i228702890@outlook.com · 24h内回复</p></div>
+        <div class="mt-8 md:mt-0 text-right"><p class="text-sm gold-text">社交</p><div class="space-x-6"><a href="#" class="hover:text-[#8a7356]">Instagram</a><a href="#" class="hover:text-[#8a7356]">Twitter</a></div><p class="mt-8 md:mt-12 text-xs text-[#888]">© 2025 CORE. 随心所建</p></div>
       </div>
     </footer>
   </main>
 
   <script>
     (function() {
-      // 光标、Three.js、Lenis等
+      // ----- 移动端检测 & 滚动方案 -----
+      const isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      // 光标效果 (移动端隐藏)
       const cursor = document.getElementById('customCursor');
-      if (cursor && matchMedia('(pointer: fine)').matches) {
+      if (cursor && matchMedia('(pointer: fine)').matches && !isMobile) {
         document.addEventListener('mousemove', e => { cursor.style.left = e.clientX+'px'; cursor.style.top = e.clientY+'px'; });
         document.querySelectorAll('a, button, .price-card, .btn-capsule, .nav-dot, #orderNowBtn, #submitOrder').forEach(el => {
           el.addEventListener('mouseenter', () => cursor.classList.add('-hover'));
           el.addEventListener('mouseleave', () => cursor.classList.remove('-hover'));
         });
-      }
+      } else if (cursor) { cursor.style.display = 'none'; }
       
+      // Three.js 背景 (低性能设备可降低效果，但保留)
       const canvas = document.getElementById('threeBg');
-      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-      renderer.setSize(innerWidth, innerHeight); renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-      const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 1000); camera.position.set(0,0,10);
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: !isMobile });
+      renderer.setSize(innerWidth, innerHeight); 
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      const scene = new THREE.Scene(); 
+      const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 1000); 
+      camera.position.set(0,0,10);
       scene.add(new THREE.AmbientLight(0xffffff,0.7)); 
       const light1 = new THREE.PointLight(0xd4c5b0, 1); light1.position.set(2,3,4); scene.add(light1);
       const knot = new THREE.Mesh(new THREE.TorusKnotGeometry(1.8,0.42,180,16), new THREE.MeshStandardMaterial({ color:0xbcae9a, roughness:0.4, wireframe:true, transparent:true, opacity:0.4 }));
-      scene.add(knot); const ring = new THREE.Mesh(new THREE.TorusGeometry(2.5,0.06,80,160), new THREE.MeshStandardMaterial({ color:0xc8bcac, roughness:0.35, wireframe:true, transparent:true, opacity:0.2 }));
+      scene.add(knot); 
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(2.5,0.06,80,160), new THREE.MeshStandardMaterial({ color:0xc8bcac, roughness:0.35, wireframe:true, transparent:true, opacity:0.2 }));
       ring.rotation.x=0.8; scene.add(ring);
-      function anim(){ requestAnimationFrame(anim); knot.rotation.y+=0.0015; ring.rotation.x+=0.0005; renderer.render(scene,camera); } anim();
-      window.addEventListener('resize', () => { camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+      function anim(){ requestAnimationFrame(anim); knot.rotation.y+=0.0015; ring.rotation.x+=0.0005; renderer.render(scene,camera); } 
+      anim();
+      window.addEventListener('resize', () => { 
+        camera.aspect = innerWidth/innerHeight; 
+        camera.updateProjectionMatrix(); 
+        renderer.setSize(innerWidth, innerHeight); 
+      });
 
-      const lenis = new Lenis({ duration:1.6, smooth:true, overscroll:true });
-      function raf(t){ lenis.raf(t); requestAnimationFrame(raf); } requestAnimationFrame(raf);
-      lenis.on('scroll', ScrollTrigger.update); gsap.ticker.add(t=>lenis.raf(t*1000));
+      // ----- 平滑滚动: 移动端使用原生 scrollTo，桌面使用 Lenis -----
+      let lenis = null;
+      let getScrollY = () => window.scrollY;
+      let scrollToFn = (target, offset = 0) => {
+        const y = target.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      };
       
+      if (!isMobile && typeof Lenis !== 'undefined') {
+        lenis = new Lenis({ duration: 1.2, smooth: true, overscroll: true, touchMultiplier: 0 });
+        getScrollY = () => lenis.scroll || window.scrollY;
+        scrollToFn = (target, offset = 0) => lenis.scrollTo(target, { offset: -offset });
+        
+        function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+        lenis.on('scroll', () => { ScrollTrigger.update(); updateActiveDot(); });
+        gsap.ticker.add(t => lenis.raf(t * 1000));
+      } else {
+        window.addEventListener('scroll', () => { ScrollTrigger.update(); updateActiveDot(); });
+      }
+      
+      // GSAP 滚动动画
       gsap.set('.animate-on-scroll', { opacity:0, y:30 });
-      document.querySelectorAll('.animate-on-scroll').forEach(el => gsap.to(el, { opacity:1, y:0, duration:1, scrollTrigger:{ trigger:el, start:'top 88%', once:true } }));
+      document.querySelectorAll('.animate-on-scroll').forEach(el => {
+        gsap.to(el, { opacity:1, y:0, duration:0.9, scrollTrigger:{ trigger:el, start:'top 88%', once:true } });
+      });
       
+      // 锚点平滑滚动
       document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => { 
-        e.preventDefault(); const t = document.querySelector(a.getAttribute('href')); 
-        if(t) lenis.scrollTo(t, { offset: -40 }); 
+        e.preventDefault(); 
+        const t = document.querySelector(a.getAttribute('href')); 
+        if(t) {
+          if (lenis) lenis.scrollTo(t, { offset: -40 });
+          else scrollToFn(t, 40);
+        }
       }));
 
+      // 导航点
       const dots = document.querySelectorAll('.nav-dot');
       const sections = ['hero','why','services','pricing','demo','cart','contact'].map(id=>document.getElementById(id));
       function updateActiveDot() {
-        const y = lenis.scroll || window.scrollY;
+        const y = getScrollY();
         sections.forEach((s,i) => {
           if (!s) return;
-          const o = s.offsetTop - 100;
+          const o = s.offsetTop - 80;
           if (y >= o && y < o + s.offsetHeight) {
             dots.forEach(d => d.classList.remove('active'));
             dots[i]?.classList.add('active');
           }
         });
       }
-      lenis.on('scroll', updateActiveDot);
+      
       dots.forEach((dot) => {
         dot.addEventListener('click', () => {
           dot.classList.add('shake-effect');
           setTimeout(() => dot.classList.remove('shake-effect'), 300);
           const target = document.getElementById(dot.dataset.target);
-          if (target) lenis.scrollTo(target, { offset: -40 });
+          if (target) {
+            if (lenis) lenis.scrollTo(target, { offset: -40 });
+            else scrollToFn(target, 40);
+          }
         });
       });
 
-      // 预览数据与购物车联动
-      const demoTitle = document.getElementById('demoTitle'), demoDesc = document.getElementById('demoDesc'), demoContent = document.getElementById('demoContent');
+      // ---------- 预览与购物车逻辑 (修复自动跳转) ----------
+      const demoTitle = document.getElementById('demoTitle'), 
+            demoDesc = document.getElementById('demoDesc'), 
+            demoContent = document.getElementById('demoContent');
       const cartPlanName = document.getElementById('cartPlanName');
       const cartBasePrice = document.getElementById('cartBasePrice');
       const cartAddons = document.getElementById('cartAddons');
@@ -388,7 +450,6 @@
         
         let html = '';
         
-        // 字数升级选项（仅前两个）
         if (currentPlan === 'essential' || currentPlan === 'design') {
           html += `
             <div class="border-b border-[#ddd] pb-3">
@@ -400,7 +461,6 @@
           `;
         }
         
-        // 鼠标跟随 (深度定制免费，其他+5.7)
         if (currentPlan === 'deep') {
           html += `<div class="border-b border-[#ddd] pb-3"><p class="text-sm font-medium mb-2">✨ 高级鼠标跟随+3D悬停</p><p class="text-xs text-[#7fa86a]">已免费包含</p></div>`;
         } else {
@@ -411,7 +471,6 @@
           `;
         }
         
-        // 后期修改服务
         if (currentPlan === 'deep') {
           html += `
             <div class="border-b border-[#ddd] pb-3">
@@ -432,16 +491,15 @@
         
         cartAddons.innerHTML = html;
         
-        // 绑定事件
         if (currentPlan === 'essential' || currentPlan === 'design') {
           const radioNone = document.querySelector('input[value="none"]');
           const radioPer100 = document.querySelector('input[value="per100"]');
           const radioUnlimited = document.querySelector('input[value="unlimited"]');
           const extraInput = document.getElementById('extraWords');
           
-          radioPer100.addEventListener('change', () => extraInput.disabled = false);
-          radioNone.addEventListener('change', () => extraInput.disabled = true);
-          radioUnlimited.addEventListener('change', () => extraInput.disabled = true);
+          radioPer100?.addEventListener('change', () => extraInput.disabled = false);
+          radioNone?.addEventListener('change', () => extraInput.disabled = true);
+          radioUnlimited?.addEventListener('change', () => extraInput.disabled = true);
           
           [radioNone, radioPer100, radioUnlimited, extraInput].forEach(el => el && el.addEventListener('change', updateTotal));
         }
@@ -470,7 +528,6 @@
           if (document.getElementById('addMouse')?.checked) total += 5.7;
           if (document.getElementById('addUpdate')?.checked) total += 100;
         } else {
-          // 深度定制：自主更新可选
           if (document.getElementById('addDeepUpdate')?.checked) total += 100;
         }
         
@@ -495,24 +552,40 @@
           content:`<div class="space-y-5"><p class="text-sm leading-relaxed">源码交付，20次不限页改稿，已包含双端适配。交付后享有3次免费内容修改服务，超出后每次仅需10元。如需完全自主更新权限，可加100元解锁。</p><div class="grid grid-cols-2 gap-4"><div class="bg-white/40 p-4 rounded-xl"><span class="font-medium">改稿</span><p class="text-2xl">20次</p></div><div class="bg-white/40 p-4 rounded-xl"><span class="font-medium">后期修改</span><p>3次免费 / 之后¥10</p></div></div><div class="bg-gradient-to-r from-[#ede9e4] to-[#e0d9d2] p-6 rounded-2xl"><p class="serif text-lg">✨ 完全掌控，后续无忧。</p></div></div>` }
       };
       
-      function updateDemo(type) { 
-        const d = demoData[type] || demoData.essential; 
-        demoTitle.textContent = d.title; 
-        demoDesc.textContent = d.desc; 
-        demoContent.innerHTML = d.content; 
-        history.replaceState(null, null, `#demo-${type}`); 
+      // 核心修复：分离数据更新与滚动，并提供不滚动的初始化
+      function updateDemoContentOnly(type) {
+        const d = demoData[type] || demoData.essential;
+        demoTitle.textContent = d.title;
+        demoDesc.textContent = d.desc;
+        demoContent.innerHTML = d.content;
         setPlan(type);
-        lenis.scrollTo('#demo', { offset: -60 }); 
+        // 更新URL但不触发滚动 (使用replaceState避免hash跳转)
+        history.replaceState(null, '', `#demo-${type}`);
       }
       
+      function updateDemoAndScroll(type) {
+        updateDemoContentOnly(type);
+        // 滚动到预览区
+        const target = document.getElementById('demo');
+        if (lenis) lenis.scrollTo(target, { offset: -60 });
+        else scrollToFn(target, 60);
+      }
+      
+      // 卡片点击：预览并滚动
       document.querySelectorAll('.price-card').forEach(c => c.addEventListener('click', function(){ 
-        updateDemo(this.dataset.demo); 
+        updateDemoAndScroll(this.dataset.demo);
       }));
       
-      document.getElementById('backToPricing').addEventListener('click', () => lenis.scrollTo('#pricing', { offset: -40 }));
+      document.getElementById('backToPricing').addEventListener('click', () => {
+        const target = document.getElementById('pricing');
+        if (lenis) lenis.scrollTo(target, { offset: -40 });
+        else scrollToFn(target, 40);
+      });
       
       document.getElementById('orderNowBtn').addEventListener('click', () => {
-        lenis.scrollTo('#cart', { offset: -40 });
+        const target = document.getElementById('cart');
+        if (lenis) lenis.scrollTo(target, { offset: -40 });
+        else scrollToFn(target, 40);
       });
       
       document.getElementById('submitOrder').addEventListener('click', () => {
@@ -521,11 +594,45 @@
         alert(`感谢您的订购！\n方案：${plans[currentPlan].name}\n总金额：${total}\n备注：${remarks || '无'}\n请保存此订单信息并联系我们。`);
       });
       
+      // 页面加载：强制回到顶部，只初始化内容不滚动
       window.addEventListener('load', () => { 
+        // 确保滚动位置在顶部 (移动端尤其重要)
+        window.scrollTo(0, 0);
+        if (lenis) lenis.scrollTo(0, { immediate: true });
+        
         ScrollTrigger.refresh(); 
         updateActiveDot(); 
-        updateDemo('essential'); 
+        // 仅设置预览内容与购物车，不滚动
+        updateDemoContentOnly('essential');
+        
+        // 额外处理：如果URL带有hash，也不自动滚动（清除hash影响）
+        if (window.location.hash) {
+          history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
       });
+      
+      // 监听hashchange，但只更新内容不自动滚动（除非是用户点击卡片触发的）
+      window.addEventListener('hashchange', (e) => {
+        // 如果不是用户主动触发（例如后退），我们阻止自动滚动，但可以同步内容？
+        // 简单处理：忽略hashchange引起的滚动，仅当来自卡片点击时才滚动，卡片点击已经处理。
+        // 为了防止浏览器默认滚动，我们可以在hashchange时立即重置滚动位置？但会干扰用户体验。
+        // 改为：如果hash变化且不是由我们的点击引起，则仅同步预览内容但不滚动。
+        const hash = window.location.hash;
+        if (hash && hash.startsWith('#demo-')) {
+          const type = hash.replace('#demo-', '');
+          if (demoData[type]) {
+            // 静默更新内容
+            const d = demoData[type];
+            demoTitle.textContent = d.title;
+            demoDesc.textContent = d.desc;
+            demoContent.innerHTML = d.content;
+            setPlan(type);
+          }
+        }
+        // 阻止默认滚动：由于我们用了pushState，浏览器不会自动滚动，但有些浏览器会。
+        // 这里不做额外处理。
+      });
+      
     })();
   </script>
 </body>
